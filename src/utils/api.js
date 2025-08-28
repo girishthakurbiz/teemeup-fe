@@ -5,7 +5,7 @@ export const fetchBotResponse = async (idea, updatedAnswers, topics, productType
     return null;
   }
   try {
-    const response = await fetch("http://localhost:8000/createdesign/getNextResponse", {
+    const response = await fetch(process.env.REACT_APP_API_URL+"/createdesign/getNextResponse", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ idea, answers: updatedAnswers, topics }),
@@ -25,7 +25,7 @@ export const generateEnhancedPrompt = async (idea, updatedAnswers, topics, produ
     return null;
   }
   try {
-    const response = await fetch("http://localhost:8000/createdesign/generateEnhancedPrompt", {
+    const response = await fetch(process.env.REACT_APP_API_URL+"/createdesign/generateEnhancedPrompt", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ idea, answers: updatedAnswers, topics, productType, backgroundColor }),

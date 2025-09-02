@@ -48,14 +48,17 @@ function App() {
               content: `🎨 Here's your final design prompt:\n\n${finalPrompt}`,
             },
           ]
-        : [
+        : ([
             {
               sender: "bot",
               content: "⚠️ Couldn't generate prompt. Please try again.",
             },
-          ] as any;
+          ] as any);
 
-      const updatedMessages = getUpdatedMessages(newMessagesState, finalMessages);
+      const updatedMessages = getUpdatedMessages(
+        newMessagesState,
+        finalMessages
+      );
       dispatch({ type: "SET_MESSAGES", payload: updatedMessages });
     } catch (error) {
       const updatedMessages = getUpdatedMessages(newMessagesState, [
@@ -76,33 +79,16 @@ function App() {
     dispatch({ type: "SET_PRODUCT_INFO", payload: { productType, color } });
   }, []);
 
-  const sendMessage = async () => {
-    const userInput = input.trim();
-    dispatch({ type: "SET_INPUT", payload: "" });
-
-    if (!userInput) return;
-
+  const handleUserResponse = async (userInput: string | null) => {
     const isFirstMessage = messages.length === 0;
-    if (isFirstMessage) {
-      dispatch({ type: "SET_IDEA", payload: userInput });
+    const trimmedInput = userInput?.trim() || "";
+
+    // Don't proceed if input is empty and it's not a skip
+    if (!trimmedInput && userInput !== null) return;
+
+    if (isFirstMessage && userInput) {
+      dispatch({ type: "SET_IDEA", payload: trimmedInput });
     }
-
-    const userMessage: Message = {
-      sender: "user",
-      content: userInput,
-      ...(isFirstMessage ? { idea: true } : {}),
-    };
-    const loadingMessage: Message = {
-      sender: "bot",
-      content: "Analyzing...",
-      loading: true,
-    };
-
-    const newMessagesState = [...messages, userMessage, loadingMessage];
-    dispatch({
-      type: "APPEND_MESSAGES",
-      payload: [userMessage, loadingMessage],
-    });
 
     const updatedAnswers = [...answers];
     const lastUnansweredIndex = [...updatedAnswers]
@@ -113,18 +99,36 @@ function App() {
       const actualIndex = updatedAnswers.length - 1 - lastUnansweredIndex;
       updatedAnswers[actualIndex] = {
         ...updatedAnswers[actualIndex],
-        status: userInput ? "answered" : "skipped",
-        answer: userInput || null,
+        status: userInput === null ? "skipped" : "answered",
+        answer: userInput === null ? null : trimmedInput,
       };
+      dispatch({ type: "SET_ANSWERS", payload: updatedAnswers });
     }
 
-    dispatch({ type: "SET_ANSWERS", payload: updatedAnswers });
+    // Prepare user and loading messages
+    const newMessages: Message[] = [];
+    if (userInput !== null) {
+      newMessages.push({
+        sender: "user",
+        content: trimmedInput,
+        ...(isFirstMessage ? { idea: true } : {}),
+      });
+    }
+
+    newMessages.push({
+      sender: "bot",
+      content: "Analyzing...",
+      loading: true,
+    });
+
+    const newMessagesState = [...messages, ...newMessages];
+    dispatch({ type: "APPEND_MESSAGES", payload: newMessages });
 
     const topics = data?.topics || [];
 
     try {
       const response = await fetchBotResponse(
-        isFirstMessage ? userInput : idea,
+        isFirstMessage ? trimmedInput : idea,
         updatedAnswers,
         topics,
         productInfo.productType || "",
@@ -183,7 +187,10 @@ function App() {
         });
       }
 
-      const updatedMessages = getUpdatedMessages(newMessagesState, newBotMessages);
+      const updatedMessages = getUpdatedMessages(
+        newMessagesState,
+        newBotMessages
+      );
       dispatch({ type: "SET_MESSAGES", payload: updatedMessages });
     } catch (err) {
       const updatedMessages = getUpdatedMessages(newMessagesState, [
@@ -194,6 +201,16 @@ function App() {
       ]);
       dispatch({ type: "SET_MESSAGES", payload: updatedMessages });
     }
+  };
+
+  const sendMessage = async () => {
+    const trimmedInput = input.trim();
+    dispatch({ type: "SET_INPUT", payload: "" });
+    await handleUserResponse(trimmedInput);
+  };
+
+  const skipQuestion = async () => {
+    await handleUserResponse(null);
   };
 
   return (
@@ -209,6 +226,7 @@ function App() {
             dispatch({ type: "SET_INPUT", payload: value })
           }
           sendMessage={sendMessage}
+          skipQuestion={skipQuestion} // ← Pass skip handler
           questions={questions}
           generatePrompt={generatePrompt}
         />

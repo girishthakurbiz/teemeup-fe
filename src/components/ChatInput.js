@@ -7,6 +7,7 @@ const ChatInput = ({
   sendMessage,
   questions,
   generatePrompt,
+  skipQuestion
 }) => (
   <div className="chat-input">
     <input
@@ -35,6 +36,9 @@ const ChatInput = ({
             </button>{" "}
             <button className="generate-btn" onClick={generatePrompt}>
               Finalize prompt
+            </button>
+             <button className="generate-btn" onClick={skipQuestion}>
+              Skip
             </button>
           </>
         )}

@@ -117,7 +117,7 @@ function App() {
 
     newMessages.push({
       sender: "bot",
-      content: "Analyzing...",
+      content: "Analyzing Your Prompt",
       loading: true,
     });
 
@@ -226,7 +226,7 @@ function App() {
             dispatch({ type: "SET_INPUT", payload: value })
           }
           sendMessage={sendMessage}
-          skipQuestion={skipQuestion} // ← Pass skip handler
+          skipQuestion={skipQuestion} 
           questions={questions}
           generatePrompt={generatePrompt}
         />

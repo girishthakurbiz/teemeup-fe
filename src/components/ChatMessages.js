@@ -7,7 +7,8 @@ const ChatMessages = ({ messages, messagesEndRef }) => (
         key={idx}
         className={`chat-message-row ${
           msg.sender === "user" ? "chat-message-row-user" : "chat-message-row-bot"
-        }`}
+        }
+        ${msg.loading ? "loading-message" : ""}`}
       >
         {msg.sender === "bot" && (
           <img src={botIcon} className="bot-icon" alt="bot" />

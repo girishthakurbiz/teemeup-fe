@@ -1,6 +1,6 @@
 const ChatHeader = () => (
   <div className="chat-header">
-    <span>Customize your T-shirt</span>
+    <span>Customize your Design</span>
   </div>
 );
 

@@ -1,4 +1,4 @@
-import sendButton from "../assets/sendButton.png";
+import SendIcon from "../assets/sendButton";
 
 const ChatInput = ({
   showIntro,
@@ -11,7 +11,7 @@ const ChatInput = ({
   <div className="chat-input">
     <input
       type="text"
-      placeholder="Describe the design you want on your t-shirt"
+      placeholder="Enter your idea here  (Ex. - Astronaut with a boom box)"
       value={input}
       onChange={(e) => setInput(e.target.value)}
       onKeyDown={(e) => e.key === "Enter" && sendMessage()}
@@ -19,7 +19,8 @@ const ChatInput = ({
 
     {showIntro ? (
       <button onClick={sendMessage} className="send-button">
-        <img src={sendButton} alt="send" />
+        {/* <img src={sendButton} alt="send" /> */}
+        <SendIcon/>
       </button>
     ) : (
       <>

@@ -1,6 +1,13 @@
 import sendButton from "../assets/sendButton.png";
 
-const ChatInput = ({ showIntro, input, setInput, sendMessage, questions, generatePrompt }) => (
+const ChatInput = ({
+  showIntro,
+  input,
+  setInput,
+  sendMessage,
+  questions,
+  generatePrompt,
+}) => (
   <div className="chat-input">
     <input
       type="text"
@@ -16,13 +23,20 @@ const ChatInput = ({ showIntro, input, setInput, sendMessage, questions, generat
       </button>
     ) : (
       <>
-        <button className="generate-btn" onClick={generatePrompt}>Generate</button>
-        {questions && <> <button className="generate-btn" onClick={sendMessage}>
-          Next
-        </button> <button className="generate-btn" onClick={generatePrompt}>
-          Finalize prompt
-        </button></>}
-
+        <button className="generate-btn" onClick={generatePrompt}>
+          Generate
+        </button>
+        {questions && (
+          <>
+            {" "}
+            <button className="generate-btn" onClick={sendMessage}>
+              Next
+            </button>{" "}
+            <button className="generate-btn" onClick={generatePrompt}>
+              Finalize prompt
+            </button>
+          </>
+        )}
       </>
     )}
   </div>

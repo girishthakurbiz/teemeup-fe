@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useReducer } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useReducer,
+  useState,
+} from "react";
 import ChatHeader from "./components/ChatHeader";
 import ChatIntro from "./components/ChatIntro";
 import ChatMessages from "./components/ChatMessages";
@@ -14,8 +20,11 @@ function App() {
   const { input, messages, answers, data, productInfo, idea, questions } =
     state;
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const showIntro = messages.length === 0;
+  const hasBotResponded = messages.some((msg) => msg.sender === "bot");
 
   const generatePrompt = useCallback(async () => {
     const updatedAnswers = [...answers];
@@ -46,6 +55,7 @@ function App() {
             {
               sender: "bot",
               content: `🎨 Here's your final design prompt:\n\n${finalPrompt}`,
+              finalPrompt: true,
             },
           ]
         : ([
@@ -120,6 +130,7 @@ function App() {
       content: "Analyzing Your Prompt",
       loading: true,
     });
+    setLoading(true);
 
     const newMessagesState = [...messages, ...newMessages];
     dispatch({ type: "APPEND_MESSAGES", payload: newMessages });
@@ -143,9 +154,11 @@ function App() {
           },
         ]);
         dispatch({ type: "SET_MESSAGES", payload: updatedMessages });
+        setLoading(false);
+
         return;
       }
-
+      setLoading(false);
       dispatch({ type: "SET_DATA", payload: response });
 
       const newBotMessages: Message[] = [];
@@ -226,9 +239,12 @@ function App() {
             dispatch({ type: "SET_INPUT", payload: value })
           }
           sendMessage={sendMessage}
-          skipQuestion={skipQuestion} 
-          questions={questions}
+          skipQuestion={skipQuestion}
           generatePrompt={generatePrompt}
+          finalPrompt={messages.find((msg: any) => msg.finalPrompt)}
+          resetPrompt={() => {}}
+          hasBotResponded={hasBotResponded}
+          loading={loading}
         />
       </div>
     </div>

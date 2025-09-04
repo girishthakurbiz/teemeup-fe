@@ -132,14 +132,7 @@ color:  #555555;
   -webkit-box-shadow: none;
   box-shadow: none;
 }
-.chat-messages {
-  margin-top: 20px;
-  min-height: 200px;
-  overflow-y: auto;
-  flex: 1 1 auto; /* Allow messages to grow and fill space */
-  display: flex;
-  
-}
+
 
 
 .chat-popup-overlay {
@@ -202,7 +195,7 @@ color:  #555555;
   padding: 10px 16px;
   border-radius: 16px;
   font-size: 14px;
-  line-height: 12px;
+  line-height: 16px;
   word-break: break-word;
   font-family: 'Inter', sans-serif;
 }

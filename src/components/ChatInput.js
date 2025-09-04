@@ -36,21 +36,21 @@ const ChatInput = ({
             className="generate-btn"
             disabled={loading}
           >
-            Make Changes
+            CONFIRM
           </button>
           <button
-            onClick={sendMessage}
+            onClick={generatePrompt}
             className="generate-btn"
             disabled={loading}
           >
-            Confirm
+            MAKE CHANGES
           </button>
           <button
             onClick={resetPrompt}
             className="generate-btn"
             disabled={loading}
           >
-            Reset
+            RESET
           </button>
         </>
       ) : (
@@ -73,7 +73,7 @@ const ChatInput = ({
                 onClick={generatePrompt}
                 disabled={loading}
               >
-                Finalise Prompt
+                FINALISE PROMPT
               </button>
 
               <button
@@ -81,7 +81,7 @@ const ChatInput = ({
                 onClick={skipQuestion}
                 disabled={loading}
               >
-                Skip
+                SKIP
               </button>
             </>
           )}

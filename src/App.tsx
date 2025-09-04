@@ -17,10 +17,7 @@ import { Message } from "./types";
 
 function App() {
   const [state, dispatch] = useReducer(chatReducer, initialChatState);
-  const { input, messages, answers, data, productInfo, idea, questions } =
-    state;
-
-  const [loading, setLoading] = useState<boolean>(false);
+  const { input, messages, answers, data, productInfo, idea, loading } = state;
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const showIntro = messages.length === 0;
@@ -130,7 +127,7 @@ function App() {
       content: "Analyzing Your Prompt",
       loading: true,
     });
-    setLoading(true);
+    dispatch({ type: "SET_LOADING", payload: true });
 
     const newMessagesState = [...messages, ...newMessages];
     dispatch({ type: "APPEND_MESSAGES", payload: newMessages });
@@ -154,11 +151,12 @@ function App() {
           },
         ]);
         dispatch({ type: "SET_MESSAGES", payload: updatedMessages });
-        setLoading(false);
+        dispatch({ type: "SET_LOADING", payload: false });
 
         return;
       }
-      setLoading(false);
+      dispatch({ type: "SET_LOADING", payload: false });
+
       dispatch({ type: "SET_DATA", payload: response });
 
       const newBotMessages: Message[] = [];
@@ -242,7 +240,10 @@ function App() {
           skipQuestion={skipQuestion}
           generatePrompt={generatePrompt}
           finalPrompt={messages.find((msg: any) => msg.finalPrompt)}
-          resetPrompt={() => {}}
+          resetPrompt={() => {
+            console.log("Resetting chat");
+            dispatch({ type: "RESET_ALL" })
+          }}
           hasBotResponded={hasBotResponded}
           loading={loading}
         />

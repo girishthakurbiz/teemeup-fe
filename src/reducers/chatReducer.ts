@@ -8,6 +8,7 @@ export interface ChatState {
   productInfo: ProductInfo;
   idea: string | null;
   questions: boolean;
+  loading: boolean;
 }
 
 export type ChatAction =
@@ -18,7 +19,10 @@ export type ChatAction =
   | { type: "SET_DATA"; payload: DataResponse }
   | { type: "SET_PRODUCT_INFO"; payload: ProductInfo }
   | { type: "SET_IDEA"; payload: string | null }
-  | { type: "SET_QUESTIONS"; payload: boolean };
+  | { type: "SET_QUESTIONS"; payload: boolean }
+  | { type: "RESET_ALL" }
+  | { type: "SET_LOADING"; payload: boolean };
+
 
 export const initialChatState: ChatState = {
   input: "",
@@ -28,6 +32,8 @@ export const initialChatState: ChatState = {
   productInfo: {},
   idea: null,
   questions: true,
+  loading: false,
+
 };
 
 export function chatReducer(state: ChatState, action: ChatAction): ChatState {
@@ -49,6 +55,11 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
       return { ...state, idea: action.payload };
     case "SET_QUESTIONS":
       return { ...state, questions: action.payload };
+    case "SET_LOADING":
+      return { ...state, loading: action.payload };
+      case "RESET_ALL":
+        console.log("RESET_ALL action triggered");
+      return { ...initialChatState };
     default:
       return state;
   }

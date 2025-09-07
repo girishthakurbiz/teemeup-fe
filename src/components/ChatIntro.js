@@ -8,7 +8,7 @@ const ChatIntro = () => (
         <img
           src={icon}
           alt="icon"
-          style={{ width: "100%", objectFit: "contain" }}
+          style={{ width: "100%", height: "100%", objectFit: "contain" }}
         />
       </div>
       <div className="chat-gpt-content">
@@ -24,7 +24,7 @@ const ChatIntro = () => (
         <img
           src={gptIcon}
           alt="icon"
-          style={{ width: "100%", objectFit: "contain" }}
+          style={{ width: "100%", height: "100%", objectFit: "contain" }}
         />
       </div>
       <div>Powered by ChatGPT</div>

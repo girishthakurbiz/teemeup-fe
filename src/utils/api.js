@@ -19,7 +19,7 @@ export const fetchBotResponse = async (idea, updatedAnswers, topics, productType
   }
 };
 
-export const generateEnhancedPrompt = async (idea, updatedAnswers, topics, productType, backgroundColor) => {
+export const generateEnhancedPrompt = async (idea, updatedAnswers, topics,user_inputs, productType, backgroundColor) => {
   if (!idea) {
     console.error("No idea provided ");
     return null;
@@ -28,7 +28,7 @@ export const generateEnhancedPrompt = async (idea, updatedAnswers, topics, produ
     const response = await fetch(process.env.REACT_APP_API_URL+"/createdesign/generateEnhancedPrompt", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idea, answers: updatedAnswers, topics, productType, backgroundColor }),
+      body: JSON.stringify({ idea, answers: updatedAnswers, topics, user_inputs, productType, backgroundColor }),
     });
 
     const apiResponse = await response.json();

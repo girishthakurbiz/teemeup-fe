@@ -9,8 +9,9 @@ export interface ChatState {
   idea: string | null;
   questions: boolean;
   loading: boolean;
-  makeChanges: boolean,
+  makeChanges: boolean;
   finalizePrompt?: boolean;
+  users_input: string[];
 }
 
 export type ChatAction =
@@ -24,8 +25,8 @@ export type ChatAction =
   | { type: "SET_QUESTIONS"; payload: boolean }
   | { type: "RESET_ALL" }
   | { type: "SET_LOADING"; payload: boolean }
+  | { type: "ADD_USER_INPUT"; payload: string }
   | { type: "MAKE_CHANGES"; payload: boolean };
-
 
 export const initialChatState: ChatState = {
   input: "",
@@ -36,7 +37,8 @@ export const initialChatState: ChatState = {
   idea: null,
   questions: true,
   loading: false,
-makeChanges: false,
+  makeChanges: false,
+  users_input: [],
 };
 
 export function chatReducer(state: ChatState, action: ChatAction): ChatState {
@@ -44,9 +46,9 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
     case "SET_INPUT":
       return { ...state, input: action.payload };
     case "SET_MESSAGES":
-  return { ...state, messages: action.payload };
+      return { ...state, messages: action.payload };
     case "APPEND_MESSAGES":
-        console.log("action.payload",[...state.messages, ...action.payload])
+      console.log("action.payload", [...state.messages, ...action.payload]);
       return { ...state, messages: [...state.messages, ...action.payload] };
     case "SET_ANSWERS":
       return { ...state, answers: action.payload };
@@ -60,11 +62,12 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
       return { ...state, questions: action.payload };
     case "SET_LOADING":
       return { ...state, loading: action.payload };
-     case "MAKE_CHANGES":    
-     return { ...state, makeChanges: action.payload };
-
-      case "RESET_ALL":
-        console.log("RESET_ALL action triggered");
+    case "MAKE_CHANGES":
+      return { ...state, makeChanges: action.payload };
+    case "ADD_USER_INPUT":
+      return { ...state, users_input: [...state.users_input, action.payload] };
+    case "RESET_ALL":
+      console.log("RESET_ALL action triggered");
       return { ...initialChatState };
     default:
       return state;

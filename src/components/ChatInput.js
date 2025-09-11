@@ -5,57 +5,43 @@ const ChatInput = ({
   input,
   setInput,
   sendMessage,
-  finalPrompt,
   generatePrompt,
   skipQuestion,
   resetPrompt,
-  hasBotResponded,
   loading,
+  makeChanges,
+  onMakeChanges,
+  onConfirmFinalPrompt,
+  messages,
 }) => {
+  const finalPrompt = messages.find((msg) => msg.finalPrompt);
   const isTyping = input.trim().length > 0;
+  const hasBotResponded = messages.some((msg) => msg.sender === "bot");
+  const allQuestionsCompleted = messages.some((msg) => msg.allSet);
+
+  const showSendButton = isTyping || showIntro;
+  const showInputArea = (!allQuestionsCompleted && !finalPrompt) || makeChanges;
+  const showFinalizeAndSkip = hasBotResponded && !showIntro && !finalPrompt;
+
+  const placeholderText = showIntro
+    ? "Enter your idea here (Ex. - Astronaut with a boom box)"
+    : makeChanges
+    ? "Add your changes here"
+    : "Describe the design you want on your product";
 
   return (
-    <div className="chat-input">
-      <input
-        type="text"
-        placeholder={
-          showIntro
-            ? "Enter your idea here  (Ex. - Astronaut with a boom box)"
-            : "Describe the design you want on your t-shirt"
-        }
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-      />
+    <>
+      {showInputArea ? (
+        <div className="chat-input">
+          <input
+            type="text"
+            placeholder={placeholderText}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          />
 
-      {/* FINAL PROMPT STATE */}
-      {finalPrompt ? (
-        <>
-          <button
-            onClick={sendMessage}
-            className="generate-btn"
-            disabled={loading}
-          >
-            CONFIRM
-          </button>
-          <button
-            onClick={generatePrompt}
-            className="generate-btn"
-            disabled={loading}
-          >
-            MAKE CHANGES
-          </button>
-          <button
-            onClick={resetPrompt}
-            className="generate-btn"
-            disabled={loading}
-          >
-            RESET
-          </button>
-        </>
-      ) : (
-        <>
-          {(isTyping || showIntro) && (
+          {showSendButton && (
             <button
               disabled={loading}
               onClick={sendMessage}
@@ -65,8 +51,7 @@ const ChatInput = ({
             </button>
           )}
 
-          {/* Show Skip and Finalise only after bot has responded */}
-          {hasBotResponded && !showIntro && (
+          {showFinalizeAndSkip && (
             <>
               <button
                 className="generate-btn"
@@ -76,18 +61,56 @@ const ChatInput = ({
                 FINALISE PROMPT
               </button>
 
-              <button
-                className="generate-btn"
-                onClick={skipQuestion}
-                disabled={loading}
-              >
-                SKIP
-              </button>
+              {!allQuestionsCompleted && (
+                <button
+                  className="generate-btn"
+                  onClick={skipQuestion}
+                  disabled={loading}
+                >
+                  SKIP
+                </button>
+              )}
             </>
           )}
-        </>
+        </div>
+      ) : (
+        <div>
+          {!finalPrompt ? (
+            <button
+              className="generate-btn"
+              onClick={generatePrompt}
+              disabled={loading}
+            >
+              FINALISE PROMPT
+            </button>
+          ) : (
+            <button
+              onClick={onConfirmFinalPrompt}
+              className="generate-btn"
+              disabled={loading}
+            >
+              CONFIRM
+            </button>
+          )}
+
+          <button
+            onClick={onMakeChanges}
+            className="generate-btn"
+            disabled={loading}
+          >
+            MAKE CHANGES
+          </button>
+
+          <button
+            onClick={resetPrompt}
+            className="generate-btn"
+            disabled={loading}
+          >
+            RESET
+          </button>
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

@@ -26,71 +26,82 @@ function App() {
     idea,
     loading,
     makeChanges,
+    users_input,
   } = state;
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const showIntro = messages.length === 0;
 
-  const generatePrompt = useCallback(async (trimmedInput: any) => {
-    const updatedAnswers = [...answers];
-    const topics = data?.topics || [];
-    console.log("trimmedInputtrimmedInput",trimmedInput)
+  const generatePrompt = useCallback(
+    async (trimmedInput: any) => {
+      const updatedAnswers = [...answers];
+      const topics = data?.topics || [];
+      console.log("trimmedInputtrimmedInput", trimmedInput);
+      const updatedUsersInput = [...users_input];
+      if (trimmedInput) {
+        dispatch({ type: "ADD_USER_INPUT", payload: trimmedInput });
+        updatedUsersInput.push(trimmedInput);
+      }
+      console.log("updatedUsersInput",updatedUsersInput)
 
-    const loadingMessage: Message = {
-      sender: "bot",
-      content: "Generating your final prompt...",
-      loading: true,
-    };
+      const loadingMessage: Message = {
+        sender: "bot",
+        content: "Generating your final prompt...",
+        loading: true,
+      };
 
-    const newMessagesState = [...messages, loadingMessage];
-    dispatch({ type: "APPEND_MESSAGES", payload: [loadingMessage] });
-    dispatch({ type: "SET_LOADING", payload: true });
-    dispatch({ type: "MAKE_CHANGES", payload: false });
-    try {
-      const response = await generateEnhancedPrompt(
-        idea,
-        updatedAnswers,
-        topics,
-        productInfo.productType || "",
-        productInfo.color || ""
-      );
+      const newMessagesState = [...messages, loadingMessage];
+      dispatch({ type: "APPEND_MESSAGES", payload: [loadingMessage] });
+      dispatch({ type: "SET_LOADING", payload: true });
+      dispatch({ type: "MAKE_CHANGES", payload: false });
+      try {
+        const response = await generateEnhancedPrompt(
+          idea,
+          updatedAnswers,
+          topics,
+           updatedUsersInput,
+          productInfo.productType || "",
+          productInfo.color || ""
+        );
 
-      const finalPrompt = response?.data?.enhancedPrompt?.final_prompt;
+        const finalPrompt = response?.data?.enhancedPrompt?.final_prompt;
 
-      const finalMessages = finalPrompt
-        ? [
-            {
-              sender: "bot",
-              content: `🎨 Here's your final design prompt:\n\n${finalPrompt}`,
-              finalPrompt: true,
-            },
-          ]
-        : ([
-            {
-              sender: "bot",
-              content: "⚠️ Couldn't generate prompt. Please try again.",
-            },
-          ] as any);
+        const finalMessages = finalPrompt
+          ? [
+              {
+                sender: "bot",
+                content: `🎨 Here's your final design prompt:\n\n${finalPrompt}`,
+                finalPrompt: true,
+              },
+            ]
+          : ([
+              {
+                sender: "bot",
+                content: "⚠️ Couldn't generate prompt. Please try again.",
+              },
+            ] as any);
 
-      const updatedMessages = getUpdatedMessages(
-        newMessagesState,
-        finalMessages
-      );
+        const updatedMessages = getUpdatedMessages(
+          newMessagesState,
+          finalMessages
+        );
 
-      dispatch({ type: "SET_MESSAGES", payload: updatedMessages });
-      dispatch({ type: "SET_LOADING", payload: false });
-    } catch (error) {
-      const updatedMessages = getUpdatedMessages(newMessagesState, [
-        {
-          sender: "bot",
-          content: "❌ Something went wrong while generating the prompt.",
-        },
-      ]);
-      dispatch({ type: "SET_LOADING", payload: false });
+        dispatch({ type: "SET_MESSAGES", payload: updatedMessages });
+        dispatch({ type: "SET_LOADING", payload: false });
+      } catch (error) {
+        const updatedMessages = getUpdatedMessages(newMessagesState, [
+          {
+            sender: "bot",
+            content: "❌ Something went wrong while generating the prompt.",
+          },
+        ]);
+        dispatch({ type: "SET_LOADING", payload: false });
 
-      dispatch({ type: "SET_MESSAGES", payload: updatedMessages });
-    }
-  }, [answers, data, idea, productInfo, messages]);
+        dispatch({ type: "SET_MESSAGES", payload: updatedMessages });
+      }
+    },
+    [answers, data, idea, productInfo, messages]
+  );
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -209,8 +220,8 @@ function App() {
           sender: "bot",
           content:
             "✅ All set! Thanks for your responses. We’re ready to generate your awesome T-shirt design.",
-          allSet: true
-          });
+          allSet: true,
+        });
       }
 
       const updatedMessages = getUpdatedMessages(

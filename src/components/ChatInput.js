@@ -55,7 +55,7 @@ const ChatInput = ({
             <>
               <button
                 className="generate-btn"
-                onClick={generatePrompt}
+                onClick={()=> generatePrompt()}
                 disabled={loading}
               >
                 FINALISE PROMPT

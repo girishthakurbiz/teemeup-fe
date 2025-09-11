@@ -5,6 +5,8 @@ export interface Message {
   content: string;
   loading?: boolean;
   idea?: boolean;
+  finalPrompt?: boolean;
+  allSet?: boolean;
 }
 
 export interface Answer {

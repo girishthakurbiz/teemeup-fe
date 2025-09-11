@@ -17,15 +17,24 @@ import { Message } from "./types";
 
 function App() {
   const [state, dispatch] = useReducer(chatReducer, initialChatState);
-  const { input, messages, answers, data, productInfo, idea, loading } = state;
+  const {
+    input,
+    messages,
+    answers,
+    data,
+    productInfo,
+    idea,
+    loading,
+    makeChanges,
+  } = state;
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const showIntro = messages.length === 0;
-  const hasBotResponded = messages.some((msg) => msg.sender === "bot");
 
-  const generatePrompt = useCallback(async () => {
+  const generatePrompt = useCallback(async (trimmedInput: any) => {
     const updatedAnswers = [...answers];
     const topics = data?.topics || [];
+    console.log("trimmedInputtrimmedInput",trimmedInput)
 
     const loadingMessage: Message = {
       sender: "bot",
@@ -35,7 +44,8 @@ function App() {
 
     const newMessagesState = [...messages, loadingMessage];
     dispatch({ type: "APPEND_MESSAGES", payload: [loadingMessage] });
-
+    dispatch({ type: "SET_LOADING", payload: true });
+    dispatch({ type: "MAKE_CHANGES", payload: false });
     try {
       const response = await generateEnhancedPrompt(
         idea,
@@ -66,7 +76,9 @@ function App() {
         newMessagesState,
         finalMessages
       );
+
       dispatch({ type: "SET_MESSAGES", payload: updatedMessages });
+      dispatch({ type: "SET_LOADING", payload: false });
     } catch (error) {
       const updatedMessages = getUpdatedMessages(newMessagesState, [
         {
@@ -74,6 +86,8 @@ function App() {
           content: "❌ Something went wrong while generating the prompt.",
         },
       ]);
+      dispatch({ type: "SET_LOADING", payload: false });
+
       dispatch({ type: "SET_MESSAGES", payload: updatedMessages });
     }
   }, [answers, data, idea, productInfo, messages]);
@@ -124,7 +138,7 @@ function App() {
 
     newMessages.push({
       sender: "bot",
-      content: "Analyzing Your Prompt",
+      content: "...",
       loading: true,
     });
     dispatch({ type: "SET_LOADING", payload: true });
@@ -195,7 +209,8 @@ function App() {
           sender: "bot",
           content:
             "✅ All set! Thanks for your responses. We’re ready to generate your awesome T-shirt design.",
-        });
+          allSet: true
+          });
       }
 
       const updatedMessages = getUpdatedMessages(
@@ -214,10 +229,44 @@ function App() {
     }
   };
 
+  function onConfirmFinalPrompt() {
+    // Loop from the end to find the last message with finalPrompt: true
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i]?.finalPrompt) {
+        const prompt = messages[i]?.content?.split(":")[1]?.trim();
+
+        console.log("FINAL PROMPT:", messages[i].content, prompt);
+
+        const dataToSend = {
+          type: "WIDGET_CLOSED",
+          payload: {
+            productId: "12345",
+            color: "Black",
+            size: "S",
+            final_prompt: prompt,
+          },
+        };
+        // Send message to parent (Shopify page)
+        window.parent.postMessage(dataToSend, "*");
+      }
+    }
+
+    return null;
+  }
+
+  const onMakeChanges = () => {
+    dispatch({ type: "MAKE_CHANGES", payload: true });
+  };
+
   const sendMessage = async () => {
     const trimmedInput = input.trim();
     dispatch({ type: "SET_INPUT", payload: "" });
-    await handleUserResponse(trimmedInput);
+    const finalPrompt = messages.find((msg) => msg.finalPrompt);
+    if (finalPrompt) {
+      generatePrompt(trimmedInput);
+    } else {
+      await handleUserResponse(trimmedInput);
+    }
   };
 
   const skipQuestion = async () => {
@@ -239,13 +288,15 @@ function App() {
           sendMessage={sendMessage}
           skipQuestion={skipQuestion}
           generatePrompt={generatePrompt}
-          finalPrompt={messages.find((msg: any) => msg.finalPrompt)}
           resetPrompt={() => {
             console.log("Resetting chat");
-            dispatch({ type: "RESET_ALL" })
+            dispatch({ type: "RESET_ALL" });
           }}
-          hasBotResponded={hasBotResponded}
+          messages={messages}
           loading={loading}
+          makeChanges={makeChanges}
+          onMakeChanges={onMakeChanges}
+          onConfirmFinalPrompt={onConfirmFinalPrompt}
         />
       </div>
     </div>

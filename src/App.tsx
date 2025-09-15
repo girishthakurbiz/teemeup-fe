@@ -36,13 +36,17 @@ function App() {
     async (trimmedInput: any) => {
       const updatedAnswers = [...answers];
       const topics = data?.topics || [];
-      console.log("trimmedInputtrimmedInput", trimmedInput);
       const updatedUsersInput = [...users_input];
       if (trimmedInput) {
         dispatch({ type: "ADD_USER_INPUT", payload: trimmedInput });
         updatedUsersInput.push(trimmedInput);
+        const userMessage: Message = {
+          sender: "user",
+          content: trimmedInput,
+        };
+        // Append user message to messages
+        dispatch({ type: "APPEND_MESSAGES", payload: [userMessage] });
       }
-      console.log("updatedUsersInput",updatedUsersInput)
 
       const loadingMessage: Message = {
         sender: "bot",
@@ -50,7 +54,19 @@ function App() {
         loading: true,
       };
 
-      const newMessagesState = [...messages, loadingMessage];
+      const newMessagesState: Message[] = [
+        ...messages,
+        ...(trimmedInput
+          ? [
+              {
+                sender: "user",
+                content: String(trimmedInput),
+              } as Message,
+            ]
+          : []),
+        loadingMessage,
+      ];
+
       dispatch({ type: "APPEND_MESSAGES", payload: [loadingMessage] });
       dispatch({ type: "SET_LOADING", payload: true });
       dispatch({ type: "MAKE_CHANGES", payload: false });
@@ -59,7 +75,7 @@ function App() {
           idea,
           updatedAnswers,
           topics,
-           updatedUsersInput,
+          updatedUsersInput,
           productInfo.productType || "",
           productInfo.color || ""
         );
@@ -245,9 +261,6 @@ function App() {
     for (let i = messages.length - 1; i >= 0; i--) {
       if (messages[i]?.finalPrompt) {
         const prompt = messages[i]?.content?.split(":")[1]?.trim();
-
-        console.log("FINAL PROMPT:", messages[i].content, prompt);
-
         const dataToSend = {
           type: "WIDGET_CLOSED",
           payload: {
@@ -300,7 +313,6 @@ function App() {
           skipQuestion={skipQuestion}
           generatePrompt={generatePrompt}
           resetPrompt={() => {
-            console.log("Resetting chat");
             dispatch({ type: "RESET_ALL" });
           }}
           messages={messages}

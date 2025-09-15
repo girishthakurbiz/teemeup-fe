@@ -74,7 +74,7 @@ const ChatInput = ({
           )}
         </div>
       ) : (
-        <div>
+        <div className="footer-buttons">
           {!finalPrompt ? (
             <button
               className="generate-btn"

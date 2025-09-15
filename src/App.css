@@ -252,3 +252,13 @@ color:  #555555;
   font-style: italic;
   font-size: 10px !important;
 }
+.footer-buttons {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+    

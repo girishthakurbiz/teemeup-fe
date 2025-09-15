@@ -1,4 +1,5 @@
 import SendIcon from "../assets/sendButton";
+import ResetButton from "../assets/resetButton";
 
 const ChatInput = ({
   showIntro,
@@ -103,10 +104,10 @@ const ChatInput = ({
 
           <button
             onClick={resetPrompt}
-            className="generate-btn"
+            className="reset-btn"
             disabled={loading}
           >
-            RESET
+            <ResetButton />
           </button>
         </div>
       )}

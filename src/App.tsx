@@ -102,9 +102,12 @@ function App() {
           finalMessages
         );
 
+        console.log("Final Updated Messages:", updatedMessages);
+
         dispatch({ type: "SET_MESSAGES", payload: updatedMessages });
         dispatch({ type: "SET_LOADING", payload: false });
       } catch (error) {
+        console.log("Error generating enhanced prompt:", error);
         const updatedMessages = getUpdatedMessages(newMessagesState, [
           {
             sender: "bot",

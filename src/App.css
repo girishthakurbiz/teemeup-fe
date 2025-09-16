@@ -149,9 +149,32 @@ color:  #555555;
 .send-button {
   border: none;
   background: none;
-  width: 3rem;
-  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+
+  /* Ensure accessible touch target on mobile */
+  min-width: 30px;
+  min-height: 30px;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (min-width: 700px) {
+  .send-button {
+    width: 2.5rem;
+    height: 2rem;
+    min-width: unset;
+    min-height: unset;
+    padding: 0;
+    border-radius: 4px;
+  }
 }
 
 .chat-messages {
@@ -272,6 +295,8 @@ color:  #555555;
   background: none;
   border: none;
   cursor: pointer;
+    margin-left: 8px;
+
 }
 
 .reset-btn:hover {

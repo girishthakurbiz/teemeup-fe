@@ -20,7 +20,8 @@ export const fetchBotResponse = async (idea, updatedAnswers, topics, productType
 };
 
 export const generateEnhancedPrompt = async (idea, updatedAnswers, topics,user_inputs, productType, backgroundColor) => {
-  if (!idea) {
+
+if (!idea) {
     console.error("No idea provided ");
     return null;
   }

@@ -281,8 +281,8 @@ function App() {
     return null;
   }
 
-  const onMakeChanges = () => {
-    dispatch({ type: "MAKE_CHANGES", payload: true });
+  const onMakeChanges = (makeChange : boolean) => {
+    dispatch({ type: "MAKE_CHANGES", payload: makeChange });
   };
 
   const sendMessage = async () => {

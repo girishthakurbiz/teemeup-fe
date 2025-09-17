@@ -23,6 +23,7 @@ const ChatInput = ({
   const showSendButton = isTyping || showIntro;
   const showInputArea = (!allQuestionsCompleted && !finalPrompt) || makeChanges;
   const showFinalizeAndSkip = hasBotResponded && !showIntro && !finalPrompt;
+  const showCancelButton =  makeChanges;
 
   const placeholderText = showIntro
     ? "Enter your idea here (Ex. - Astronaut with a boom box)"
@@ -42,6 +43,7 @@ const ChatInput = ({
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           />
 
+
           {showSendButton && (
             <button
               disabled={loading}
@@ -50,7 +52,9 @@ const ChatInput = ({
             >
               <SendIcon />
             </button>
+            
           )}
+          {showCancelButton && <button className="generate-btn" onClick={()=> onMakeChanges(false)}>CANCEL</button> }
 
           {showFinalizeAndSkip && (
             <>
@@ -79,7 +83,7 @@ const ChatInput = ({
           {!finalPrompt ? (
             <button
               className="generate-btn"
-              onClick={generatePrompt}
+              onClick={() => generatePrompt()}
               disabled={loading}
             >
               FINALISE PROMPT
@@ -95,7 +99,7 @@ const ChatInput = ({
           )}
 
           <button
-            onClick={onMakeChanges}
+            onClick={() => onMakeChanges(true)}
             className="generate-btn"
             disabled={loading}
           >
@@ -109,7 +113,9 @@ const ChatInput = ({
           >
             <ResetButton />
           </button>
+          
         </div>
+        
       )}
     </>
   );

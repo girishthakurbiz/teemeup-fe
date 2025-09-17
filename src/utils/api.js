@@ -6,7 +6,7 @@ export const fetchBotResponse = async (idea, updatedAnswers, topics, productType
   }
   try {
     //process.env.REACT_APP_API_URL
-    const response = await fetch("https://teemeup-be.onrender.com/api/createdesign/getNextResponse", {
+    const response = await fetch("https://teemeup-be.onrender.com/createdesign/getNextResponse", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ idea, answers: updatedAnswers, topics }),
@@ -27,7 +27,7 @@ export const generateEnhancedPrompt = async (idea, updatedAnswers, topics,user_i
   }
   try {
     //process.env.REACT_APP_API_URL
-    const response = await fetch("https://teemeup-be.onrender.com/api/createdesign/generateEnhancedPrompt", {
+    const response = await fetch("https://teemeup-be.onrender.com/createdesign/generateEnhancedPrompt", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ idea, answers: updatedAnswers, topics, user_inputs, productType, backgroundColor }),

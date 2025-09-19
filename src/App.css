@@ -146,8 +146,8 @@ margin-right: 8px;
   cursor: pointer;
 
   /* Ensure accessible touch target on mobile */
-  min-width: 30px;
-  min-height: 30px;
+  width: 30px;
+  height: 30px;
   padding: 8px;
   border-radius: 8px;
 }

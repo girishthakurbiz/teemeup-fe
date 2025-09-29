@@ -48,7 +48,6 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
     case "SET_MESSAGES":
       return { ...state, messages: action.payload };
     case "APPEND_MESSAGES":
-      console.log("action.payload", [...state.messages, ...action.payload]);
       return { ...state, messages: [...state.messages, ...action.payload] };
     case "SET_ANSWERS":
       return { ...state, answers: action.payload };
@@ -67,7 +66,6 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
     case "ADD_USER_INPUT":
       return { ...state, users_input: [...state.users_input, action.payload] };
     case "RESET_ALL":
-      console.log("RESET_ALL action triggered");
       return { ...initialChatState };
     default:
       return state;

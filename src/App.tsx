@@ -102,12 +102,10 @@ function App() {
           finalMessages
         );
 
-        console.log("Final Updated Messages:", updatedMessages);
 
         dispatch({ type: "SET_MESSAGES", payload: updatedMessages });
         dispatch({ type: "SET_LOADING", payload: false });
       } catch (error) {
-        console.log("Error generating enhanced prompt:", error);
         const updatedMessages = getUpdatedMessages(newMessagesState, [
           {
             sender: "bot",
@@ -238,7 +236,7 @@ function App() {
         newBotMessages.push({
           sender: "bot",
           content:
-            "✅ All set! Thanks for your responses. We’re ready to generate your awesome T-shirt design.",
+            `✅ All set! Thanks for your responses. We’re ready to generate your awesome ${productInfo?.productType} design.`,
           allSet: true,
         });
       }

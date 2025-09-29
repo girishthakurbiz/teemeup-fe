@@ -1,15 +1,14 @@
 export const fetchBotResponse = async (idea, updatedAnswers, topics, productType, color) => {
-  console.log("Fetching bot response with idea:", idea, "and answers:", updatedAnswers);
   if (!idea) {
     console.error("No idea provided for bot response.");
     return null;
   }
   try {
-    //process.env
+    //process.env.REACT_APP_API_URL
     const response = await fetch(process.env.REACT_APP_API_URL+"/createdesign/getNextResponse", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idea, answers: updatedAnswers, topics }),
+      body: JSON.stringify({ idea, answers: updatedAnswers, topics, productType, color }),
     });
 
     const apiResponse = await response.json();
@@ -21,12 +20,14 @@ export const fetchBotResponse = async (idea, updatedAnswers, topics, productType
 };
 
 export const generateEnhancedPrompt = async (idea, updatedAnswers, topics,user_inputs, productType, backgroundColor) => {
-  if (!idea) {
+
+if (!idea) {
     console.error("No idea provided ");
     return null;
   }
   try {
-    //process.env
+    //process.env.REACT_APP_API_URL
+    // const response = await fetch("http://13.43.136.172/api/createdesign/getNextResponse", {
     const response = await fetch(process.env.REACT_APP_API_URL+"/createdesign/generateEnhancedPrompt", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

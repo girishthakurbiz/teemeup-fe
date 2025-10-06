@@ -22,11 +22,14 @@ const ChatInput = ({
 
   const showSendButton = isTyping || showIntro;
   const showInputArea = (!allQuestionsCompleted && !finalPrompt) || makeChanges;
-  const showFinalizeAndSkip = hasBotResponded && !showIntro && !finalPrompt;
-  const showCancelButton =  makeChanges;
+  const showFinalize =
+    hasBotResponded && !showIntro && !finalPrompt && !showSendButton;
+
+  const showSkip = hasBotResponded && !showIntro && !finalPrompt;
+  const showCancelButton = makeChanges;
 
   const placeholderText = showIntro
-    ? "Enter your idea here (Ex. - Astronaut with a boom box)"
+    ? "Enter your idea here (Ex. - Astronaut with a box)"
     : makeChanges
     ? "Add your changes here"
     : "Describe the design you want on your product";
@@ -43,7 +46,6 @@ const ChatInput = ({
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           />
 
-
           {showSendButton && (
             <button
               disabled={loading}
@@ -52,31 +54,37 @@ const ChatInput = ({
             >
               <SendIcon />
             </button>
-            
           )}
-          {showCancelButton && <button className="generate-btn" onClick={()=> onMakeChanges(false)}>CANCEL</button> }
+          {showCancelButton && (
+            <button
+              className="generate-btn"
+              onClick={() => onMakeChanges(false)}
+            >
+              CANCEL
+            </button>
+          )}
 
-          {showFinalizeAndSkip && (
-            <>
+          <>
+            {showFinalize && (
               <button
                 className="generate-btn"
-                onClick={()=> generatePrompt()}
+                onClick={() => generatePrompt()}
                 disabled={loading}
               >
                 FINALISE PROMPT
               </button>
+            )}
 
-              {!allQuestionsCompleted && (
-                <button
-                  className="generate-btn"
-                  onClick={skipQuestion}
-                  disabled={loading}
-                >
-                  SKIP
-                </button>
-              )}
-            </>
-          )}
+            {showSkip && !allQuestionsCompleted && (
+              <button
+                className="generate-btn"
+                onClick={skipQuestion}
+                disabled={loading}
+              >
+                SKIP
+              </button>
+            )}
+          </>
         </div>
       ) : (
         <div className="footer-buttons">
@@ -113,9 +121,7 @@ const ChatInput = ({
           >
             <ResetButton />
           </button>
-          
         </div>
-        
       )}
     </>
   );

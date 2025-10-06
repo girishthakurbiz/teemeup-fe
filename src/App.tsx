@@ -1,9 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useReducer,
-} from "react";
+import React, { useCallback, useEffect, useRef, useReducer } from "react";
 import ChatHeader from "./components/ChatHeader";
 import ChatIntro from "./components/ChatIntro";
 import ChatMessages from "./components/ChatMessages";
@@ -12,10 +7,12 @@ import { fetchBotResponse, generateEnhancedPrompt } from "./utils/api";
 import { getUpdatedMessages } from "./utils/messages";
 import { initialChatState, chatReducer } from "./reducers/chatReducer";
 import { Message } from "./types";
-import './App.css';
+import "./App.css";
+import useScreenSize, { DEVICES } from "./hooks/useScreenSize";
 
 function App() {
   const [state, dispatch] = useReducer(chatReducer, initialChatState);
+  const screenSize = useScreenSize();
   const {
     input,
     messages,
@@ -85,7 +82,7 @@ function App() {
           ? [
               {
                 sender: "bot",
-                content: `🎨 Here's your final design prompt:\n\n${finalPrompt}`,
+                content: `${finalPrompt}`,
                 finalPrompt: true,
               },
             ]
@@ -127,6 +124,7 @@ function App() {
 
   const handleUserResponse = async (userInput: string | null) => {
     const trimmedInput = userInput?.trim() || "";
+    console.log("trimmedInput", trimmedInput, userInput);
     const isFirstMessage = messages.length === 0;
 
     // Exit early if input is empty and not a skip
@@ -136,14 +134,15 @@ function App() {
     if (isFirstMessage && userInput) {
       dispatch({ type: "SET_IDEA", payload: trimmedInput });
     }
+    const updatedAnswers = [...answers];
+    console.log("updatedAnswersupdatedAnswers", updatedAnswers);
 
     // Update the last unanswered answer
     if (answers.length > 0) {
-      const updatedAnswers = [...answers];
       const lastUnansweredIndex = [...updatedAnswers]
         .reverse()
         .findIndex((a) => a.status === "unanswered");
-
+    
       if (lastUnansweredIndex !== -1) {
         const actualIndex = updatedAnswers.length - 1 - lastUnansweredIndex;
         updatedAnswers[actualIndex] = {
@@ -181,7 +180,7 @@ function App() {
     try {
       const response = await fetchBotResponse(
         isFirstMessage ? trimmedInput : idea,
-        [...answers],
+        [...updatedAnswers],
         topics,
         productInfo.productType || "",
         productInfo.color || ""
@@ -205,17 +204,33 @@ function App() {
         newBotMessages.push({
           sender: "bot",
           content: questionObj.question || "Here's the next question.",
+          example: questionObj.example || null,
         });
+
+
+        if (questionObj.status === "unanswered") {
+          const lastQuestionIndex = updatedAnswers.findIndex(
+            (ans) =>
+              ans.topic === questionObj.topic && ans.status === "answered"
+          );
+
+          if (lastQuestionIndex !== -1) {
+            updatedAnswers[lastQuestionIndex] = {
+              ...updatedAnswers[lastQuestionIndex],
+              status: "unanswered",
+            };
+          }
+        }
 
         dispatch({
           type: "SET_ANSWERS",
           payload: [
-            ...answers,
+            ...updatedAnswers,
             {
               topic: questionObj.topic || "",
               question: questionObj.question || "",
               example: questionObj.example || "",
-              status: "unanswered",
+              status: questionObj?.status ?? "unanswered",
               answer: "",
             },
           ],
@@ -259,9 +274,7 @@ function App() {
     if (!lastFinalPromptMsg) return null;
 
     // Extract prompt after the first colon, if needed
-    const prompt =
-      lastFinalPromptMsg.content.split(":\n\n")[1]?.trim() ||
-      lastFinalPromptMsg.content;
+    const prompt = lastFinalPromptMsg.content;
 
     const dataToSend = {
       type: "WIDGET_CLOSED",
@@ -289,13 +302,25 @@ function App() {
       await handleUserResponse(trimmedInput);
     }
   };
-
+  console.log("all answers", answers);
   return (
     <div className="chat-popup-overlay">
       <div className="chat-widget">
-        <ChatHeader />
-        {showIntro && <ChatIntro />}
-        <ChatMessages messages={messages} messagesEndRef={messagesEndRef} />
+        {screenSize !== DEVICES.MOBILE && <ChatHeader />}
+        {showIntro && <ChatIntro screenSize={screenSize} />}
+        {showIntro && screenSize !== DEVICES.MOBILE && (
+          <div
+            style={{
+              height: "70%",
+              textAlign: "center",
+              padding: "0 1rem",
+              marginBottom: "1rem",
+            }}
+          />
+        )}
+        {!showIntro && (
+          <ChatMessages messages={messages} messagesEndRef={messagesEndRef} />
+        )}
         <ChatInput
           showIntro={showIntro}
           input={input}

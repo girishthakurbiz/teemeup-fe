@@ -7,6 +7,7 @@ export interface Message {
   idea?: boolean;
   finalPrompt?: boolean;
   allSet?: boolean;
+  example?: string | null;
 }
 
 export interface Answer {

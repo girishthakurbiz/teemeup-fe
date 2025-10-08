@@ -106,13 +106,13 @@ const ChatInput = ({
             </button>
           )}
 
-          <button
+          {finalPrompt && <button
             onClick={() => onMakeChanges(true)}
             className="generate-btn"
             disabled={loading}
           >
             MAKE CHANGES
-          </button>
+          </button>}
 
           <button
             onClick={resetPrompt}

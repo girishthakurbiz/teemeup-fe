@@ -239,7 +239,7 @@ function App() {
         dispatch({ type: "SET_QUESTIONS", payload: false });
         newBotMessages.push({
           sender: "bot",
-          content: `✅ All set! Thanks for your responses. We’re ready to generate your awesome ${productInfo?.productType} design.`,
+          content: `✅ All set! Thanks for your responses. We’re ready to generate your awesome ${productInfo?.productType || 'product'} design.`,
           allSet: true,
         });
       }

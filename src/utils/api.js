@@ -1,5 +1,5 @@
-export const fetchBotResponse = async (idea, updatedAnswers, topics, productType, color) => {
-  if (!idea) {
+export const fetchBotResponse = async (data) => {
+  if (!data?.idea) {
     console.error("No idea provided for bot response.");
     return null;
   }
@@ -8,7 +8,7 @@ export const fetchBotResponse = async (idea, updatedAnswers, topics, productType
     const response = await fetch(process.env.REACT_APP_API_URL+"/createdesign/getNextResponse", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idea, answers: updatedAnswers, topics, productType, color }),
+      body: JSON.stringify(data),
     });
 
     const apiResponse = await response.json();

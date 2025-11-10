@@ -198,10 +198,12 @@ function App() {
           dispatch({ type: "SET_IDEA", payload: response.idea });
         }
       }
+    const allMessages = [...messages]
+    const hasGreeting = allMessages.some(msg => msg.greeting);
 
       // Greeting message if no previous bot message
-      if (response.greeting) {
-        newBotMessages.push({ sender: "bot", content: response.greeting });
+      if (response.greeting && !hasGreeting) {
+        newBotMessages.push({ sender: "bot", content: response.greeting, greeting:response.greeting  });
       }
 
       const questionObj = response.question ?? {};
@@ -256,6 +258,7 @@ function App() {
         payload: getUpdatedMessages(newMessagesState, newBotMessages),
       });
     } catch (err) {
+      console.log("error",err)
       dispatch({
         type: "SET_LOADING",
         payload: false,

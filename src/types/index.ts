@@ -8,6 +8,7 @@ export interface Message {
   finalPrompt?: boolean;
   allSet?: boolean;
   example?: string | null;
+  greeting?:string
 }
 
 export interface Answer {

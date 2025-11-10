@@ -51,6 +51,13 @@ const ChatMessages = ({ messages, messagesEndRef }) => {
                   click “confirm” to proceed with the prompt
                 </div>
               }
+
+              {msg.sender === "bot" &&
+            msg.allSet && !lastFinalPromptMsg &&
+                <div className="confirm-prompt">
+                  Click “Finalize Prompt” to review your final prompt
+                </div>
+              }
         </div>
       </div>
     ))}
